@@ -1,0 +1,137 @@
+.form-control {
+    width: 100%;
+    min-height: 10px;
+
+    .error-alert {
+        margin-top: 10px;
+        margin-bottom: 30px;
+        border: solid 1px #ccc;
+        height: 55px;
+        border-left: solid 5px #9e2619;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding: 5px 10px;
+    }
+
+    .form-input {
+        display: block;
+        width: 100%;
+        box-shadow: 0px 1px 2px 0 rgb(0 0 0 / 10%);
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+        height: 34px;
+        overflow: hidden;
+        display: flex;
+
+        &.error {
+            border: 1px solid red;
+        }
+
+        input {
+            display: inline-block;
+            height: 34px;
+            outline: none;
+            border: none;
+            width: 100%;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-input-icon {
+            display: flex;
+            width: 44px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+
+            .bx {
+                font-size: 20px;
+            }
+
+            & + input {
+                width: calc(100% - 44px);
+                padding-left: 0;
+            }
+        }
+    
+        
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        cursor: pointer;
+        margin-bottom: 5px;
+        border-radius: 0;
+        text-align: center;
+        user-select: none;
+        height: 35px;
+        outline: none;
+        line-height: 35px;
+        border: solid 1px #ccc;
+        transition: color .15s ease-in-out,
+            background-color .15s ease-in-out,
+            border-color .15s ease-in-out,
+            box-shadow .15s ease-in-out;
+        font-family: 'Poppins', sans-serif;
+
+        &.btn-small {
+            font-size: .8203125rem;
+            height: 28px;
+        }
+
+        &.btn-danger {
+            color: #fff;
+            background-color: #ca3120;
+            border-color: #ca3120;
+        }
+        &.btn-light {
+            color: #212529;
+            background-color: #f8f9fa;
+            border: solid 1px #dedede;
+        }
+        &.btn-light:hover {
+            color: #212529;
+            background-color: #e2e6ea;
+            border-color: #dae0e5;
+        }
+        &.btn-success {
+            color: #fff;
+            background-color: #357a32;
+            border-color: #357a32;
+        }
+        &.btn-primary {
+            color: #fff;
+            background-color: #0f6fc5;
+            border-color: #0f6fc5;
+        }
+        &.btn-primary:hover {
+            color: #fff;
+            background-color: #0c5ba1;
+            border-color: #0b5496;
+        }
+        &.btn-info {
+            color: #fff;
+            background-color: #008196;
+            border-color: #008196;
+        }
+        &.btn-info:hover {
+            color: #fff;
+            background-color: #006070;
+            border-color: #005563;
+        }
+        &.btn-success:hover {
+            color: #fff;
+            background-color: #295f27;
+            border-color: #255623;
+        }
+        &.btn-danger:hover {
+            color: #fff;
+            background-color: #a9291b;
+            border-color: #9e2619;
+        }
+    }
+}
+

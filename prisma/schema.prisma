@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Server {
+  id String @id @default(uuid()) // ID PARA IDENTIFICAÇÃO INTERNA
+  name String // Nome para identificação pelo usúario
+  local String? // Local onde o servidor está localizado (Opcional, mas recomendado)
+  provider ServerProvider @default(CUSTOM) // Provedor da vps/dedicado (Opcional, mas recomendado)
+  identifier String // Identificador da maquina
+  token String // Token da maquina
+  ip String // IP da maquina
+  port Int // porta de conexão da maquina (normalmente 2455)
+
+  containers Containers[]
+}
+
+model User {
+  id String @id @default(uuid()) // ID PARA IDENTIFICAÇÃO INTERNA
+  name String // Nome do usúario
+  email String // Email do usuario
+  username String // username do usuario
+  password String // senha encriptada do usuario
+  two_factor_secret String? // Se
+  tokens AuthToken[]
+}
+
+model Bots {
+  id String @id @default(uuid()) // Id do bot
+  bot_token String // Token do bot (ENCRIPTADO)
+  database_url String? // URL de conexão com o banco de dados (ENCRIPTADO)
+  shards Int // Quantidade de Shards
+  servers Int // Quantidade de servidores
+  git_url String
+  node_version String
+  env String? // Variaveis ENV (ENCRIPTADO)
+
+  containers Containers[]
+  backups BotDatabaseBackup[]
+}
+
+model Containers {
+  id Int @id @default(autoincrement())
+  server_id String
+  bot_id String
+  is_started Boolean @default(false)
+  ram_limit Int
+  cpu_limit Float
+  port Int?
+
+  server Server @relation(fields: [server_id], references: [id])
+  bot Bots @relation(fields: [bot_id], references: [id])
+}
+
+model BackupProvider {
+  id String @id @default(uuid())
+  provider BackupType
+  data Json
+
+  backups BotDatabaseBackup[]
+}
+
+model BotDatabaseBackup {
+  id String @id @default(uuid())
+  provider_id String
+  bot_id String
+  filename String
+  checksun String
+  db_type String // POSTGRESQL, MYSQL, MONGODB (evita usar os dados em outros tipos de db)
+
+  provider BackupProvider @relation(fields: [provider_id], references: [id])
+  bot Bots @relation(fields: [bot_id], references: [id])
+}
+
+model Cron {
+  id Int @default(autoincrement()) @id
+  bot_id String
+  name String
+  type CronType
+  time String
+
+  logs CronLogs[]
+}
+
+model CronLogs {
+  id Int @default(autoincrement()) @id
+  cron_id Int
+  result String?
+  execute_at DateTime
+
+  cron Cron @relation(fields: [cron_id], references: [id])
+}
+
+model AuthToken {
+  id String @id @default(uuid())
+  user_id String
+  expiration DateTime
+  token String
+  user User @relation(fields: [user_id], references: [id])
+}
+
+// enums
+
+enum CronType {
+  INPUT // envia para o stdin de todos os container
+  INPUT_TO_MAIN // envia para o stdin do container da shard 1
+  REQUEST // envia um request
+  DATABASE_QUERY // executa um sql no banco de dados
+}
+
+enum ServerProvider {
+  DIGITAL_OCEAN
+  MICROSOFT_AZURE
+  AMAZON_AWS
+  LINODE
+  EXTRA_VM
+  GALAXY_GATE
+  CONTABO
+  VULTR
+  RAM_NODE
+  SO_YOU_START
+  OVH
+
+  CUSTOM
+}
+
+enum BackupType {
+  SFTP
+  FTP
+  DRIVE
+}
