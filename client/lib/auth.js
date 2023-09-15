@@ -9,7 +9,7 @@ export class Auth {
     }
 
     setToken(value){
-        return localStorage.setItem("db_token", value);
+        return localStorage.setItem("dh_token", value);
     }
 
     getUser(token){

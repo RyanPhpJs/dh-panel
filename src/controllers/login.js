@@ -4,6 +4,10 @@ const User = require("../http/modules/User");
 module.exports = class Login extends Controller {
 
     [ route("/login", { method: "POST", body: Body().string("username").string("password") }) ];
+    /**
+     * 
+     * @type {import("../http/express").DHRoute}
+     */
     authenticate = async (req, res, next) => {
        
         const user = await this.db.user.findFirst({ 
@@ -16,6 +20,11 @@ module.exports = class Login extends Controller {
         if(!await User.validatePassword(req.body.password, user.password)) 
             return res.error(404, "Usúario ou senha invalidos");
 
+        const token = await this.server.auth.create(user.id);
+        res.api({
+            token: token,
+            userId: user.id
+        });
 
     }
 

@@ -46,10 +46,10 @@ module.exports = class Server {
             const e = require("express");
             return [
                 e.json({ limit: '4mb' }),
-                e.urlencoded({ limit: '4mb' }),
+                e.urlencoded({ limit: '4mb', extended: false }),
                 (req, res, next) => {
                     res.error = function (code, message){
-                        if(!message) return res.sendError(200, message);
+                        if(!message) return res.error(200, message);
                         return res.status(code).send({
                             success: false,
                             message: message,
@@ -57,13 +57,14 @@ module.exports = class Server {
                         });
                     }
                     res.api = function (code, data){
-                        if(!data) return res.api(200, data);
+                        if(!data) return res.api(200, code);
                         return res.status(code).send({
                             success: true,
                             message: null,
                             data: data
                         });
                     }
+                    next();
                 }
             ];
         }
@@ -136,7 +137,7 @@ module.exports = class Server {
                     if(typeof m === "function"){
                         console.log(`A: ${file}`);
                         const r = new m(this);
-                        if(Controller.IS_CONTROLLER === r.IS_CONTROLLER){
+                        if(m.IS_CONTROLLER === Controller.IS_CONTROLLER){
                             console.log(`Adicionando rotas de ${file}`);
                             let keys = Object.keys(r);
                             for(const index in keys){

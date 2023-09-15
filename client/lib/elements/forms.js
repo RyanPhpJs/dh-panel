@@ -15,7 +15,7 @@ function useForm(){
     return useContext(FormContext);
 }
 
-export function Form({ auth, method, target, type, onSubmit, onResponse, children, className, ...props }) {
+export function Form({ auth, method, target, type, onSubmit, onResponse, children, className, sendMode="API_SUCCESS", ...props }) {
 
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState(null);
@@ -24,7 +24,6 @@ export function Form({ auth, method, target, type, onSubmit, onResponse, childre
         e.preventDefault();
 
         let sendArgs = {};
-        console.log(formData);
         for(const key of Object.keys(formData)){
             const value = formData[key].getValue();
             const res = formData[key].validate(value);
@@ -58,14 +57,37 @@ export function Form({ auth, method, target, type, onSubmit, onResponse, childre
             headers: {
                 "Content-Type": contentType
             },
-            data: body
+            data: body,
+            validateStatus: () => true
         }).then((r) => {
-            onResponse(r.data)
+            console.log('response 1');
+            if(sendMode === "RAW"){
+                onResponse(r);
+            }else{
+                if(typeof r.data === "object"){
+                    if(r.data.success){
+                        onResponse(r.data.data);
+                    }else{
+                        setErrors({
+                            message: r.data.message,
+                            focus: () => {}
+                        })
+                    }
+                }else if(sendMode == "ALL"){
+                    onResponse(r.data)
+                }else{
+                    setErrors({
+                        message: "Um erro interno ocorreu",
+                        focus: () => {}
+                    })
+                }
+            }
+            
         })
         
     }
 
-    return <FormContext.Provider value={{ formData, setFormData, errors, setErrors }}>
+    return <FormContext.Provider value={{ formData, setFormData, errors, setErrors, sendMode }}>
         <form {...props} onSubmit={handleSubmit} className={joinClassName("form-control", className)}>
             {children}
         </form>

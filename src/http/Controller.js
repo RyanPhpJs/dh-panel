@@ -1,14 +1,14 @@
 module.exports.IS_CONTROLLER = Symbol("CONTROLLER");
 module.exports.Controller = class Controller {
 
-    IS_CONTROLLER = module.exports.IS_CONTROLLER;
+    static IS_CONTROLLER = module.exports.IS_CONTROLLER;
 
     /**
      * @param {import("./server")} client
      */
     constructor(client){
         /**
-         * @private
+         * @protected
          */
         this.server = client;
     }

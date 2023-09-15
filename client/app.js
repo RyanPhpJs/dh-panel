@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { RouterManager, Route, LoadingRouter, Link, Routes } from "./lib/Router";
 import UserContext from "./context/User";
 import { Auth, useAuth } from "./lib/auth";
 import { useAsync } from "react-async";
 import { RoutersUnathorized } from "./routers/unauth";
+
+export function useUser(){
+    const context = useContext(UserContext);
+    return {
+        user: context.user,
+        reload(){
+            context.setUser({ user: null, pending: true })
+        }
+    }
+}
 
 export function Application(){
 
@@ -23,9 +33,9 @@ async function AuthVerify({ setUser, auth }){
 
     try {
         const user = await auth.getUser(token);
-        if(!user.id) return setUser({ user: null, pending: false });
+        if(!user.success) return setUser({ user: null, pending: false });
 
-        return setUser({ user, pending: false });
+        return setUser({ user: user.data, pending: false });
     } catch (err) {
         console.log("ERRO", err);
         return setUser({ user: null, pending: false });
@@ -49,6 +59,8 @@ function PageRouter() {
     if(pending){
         return <PendingPage setUser={setUser} auth={auth} />
     }
+
+    console.log(user);
 
     if(user){
         return <div>User authenticated</div>

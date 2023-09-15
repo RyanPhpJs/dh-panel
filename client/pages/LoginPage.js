@@ -1,8 +1,10 @@
 import { ButtonColors, ErrorAlert, Form, Input, InputType, SubmitButton } from "../lib/elements/forms";
-import { BoxIcons } from "../lib/elements/icons.ts";
 import "../scss/login.scss";
+import { useUser } from "../app";
 
 export function LoginPage(){
+
+    const user = useUser();
 
     return <div className="login-container">
         <div className="card">
@@ -10,6 +12,8 @@ export function LoginPage(){
                 <h3>DH Panel</h3>
                 <Form method="POST" target="/api/login" onResponse={(data) => {
                     console.log(data);
+                    localStorage.setItem("dh_token", data.token);
+                    user.reload();
                 }}>
                     <ErrorAlert />
                     <Input type={InputType.TEXT} icon={"fa-solid fa-user"} name="username" placeholder="Usúario" isRequired={true} />
