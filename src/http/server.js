@@ -123,7 +123,8 @@ module.exports = class Server {
      * @returns 
      */
     validateBody(body, schema){
-        const res = schema.validate(body);
+        if(!schema) return { status: true, value: {} };
+        const res = Joi.object(schema).validate(body);
         if(res.error) return { status: false, error: res.error }
         return { status: true, value: res.value};
     }
@@ -135,7 +136,7 @@ module.exports = class Server {
                 if(file.endsWith(".js")){
                     const m = require(process.cwd() + "/" + file);
                     if(typeof m === "function"){
-                        console.log(`A: ${file}`);
+                        console.log(`Acessando: ${file}`);
                         const r = new m(this);
                         if(m.IS_CONTROLLER === Controller.IS_CONTROLLER){
                             console.log(`Adicionando rotas de ${file}`);
@@ -146,16 +147,19 @@ module.exports = class Server {
                                 if(key.startsWith("$__") && next){
                                     const decrypt = JSON.parse(key.slice(3));
                                     const nname = file.replace("src/controllers/", "").replace(".js", "");
-                                    const schema = this.createSchema(decrypt.body);
+                                    const schema = Controller.getBody(decrypt.body);
                                     console.log(`Rota ${decrypt.url} (${nname}->${next}) adicionada`)
                                     
                                     this.api[(decrypt.method || "GET").toLowerCase()](decrypt.url, (req, res, _next) => {
+                                        if(decrypt.isAdmin && !req.user.is_admin) return res.status(403).send({ success: false, message: "Você não tem acesso a isso" });
+                                        if(decrypt.isAdmin && decrypt.isAdmin === "root" && !req.user.is_root_admin) return res.status(403).send({ success: false, message: "Você não tem acesso a isso" });
+                                        else if(decrypt.isAdmin && decrypt.isAdmin === "user" && !req.user.is_admin) return res.status(403).send({ success: false, message: "Você não tem acesso a isso" });
                                         const rs = this.validateBody(res.body, schema);
                                         if(rs.status){
                                             req.content = res.body;
                                             r[next].call(rs, req, res, _next);
                                         }else{
-                                            return res.status(400).send({ message: "Invalid Request", error: r.error });
+                                            return res.status(400).send({ message: "Invalid Request", success: false });
                                         }
                                     })
                                 }

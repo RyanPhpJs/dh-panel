@@ -1,9 +1,13 @@
+const Joi = require("joi");
 const {Controller, route, Body } = require("../http/Controller");
 const User = require("../http/modules/User");
 
 module.exports = class Login extends Controller {
 
-    [ route("/login", { method: "POST", body: Body().string("username").string("password") }) ];
+    [ route("/login", { method: "POST", body: {
+        username: Joi.string().required(),
+        password: Joi.string().required()
+    } }) ];
     /**
      * 
      * @type {import("../http/express").DHRoute}

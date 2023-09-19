@@ -1,0 +1,43 @@
+.table-file-list {
+    width: 100%;
+  }
+  
+  .table-file-list .st__thead {
+    text-align: right;
+  }
+  
+  .table-file-list .st__thead .st__tr .st__td{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .table-file-list .st__thead .st__tr .st__td a {
+    margin-left: 10px;
+  }
+  
+  .table-file-list .st__tbody {
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .table-file-list .st__tbody .st__tr .st__td{
+    border-top: solid 1px rgb(190, 184, 184);
+    padding: 7px 10px;
+    cursor: pointer;
+  }
+  
+  .table-file-list .st__tbody .st__tr .st__td:hover {
+    background: rgba(0,0,0,.3);
+  }
+  
+  .table-file-list .st__tbody .st__tr .st__td .file_name {
+    padding-left: 15px;
+  }
+  .table-file-list .st__tbody .st__tr .st__td .file_icon i {
+    font-size: 23px;
+  }
+
+.card__right {
+    text-align: right;
+}

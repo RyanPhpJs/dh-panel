@@ -16,8 +16,9 @@ export function RouterManager(props) {
 
     const [loadingElement, _1] = useState(props.loading || <LoadingRouter />);
     const [notFoundElement, _2] = useState(props.notFound || <NotFoundRouter />);
+    const [onChange, _3] = useState(props.onChange || (() => {}))
     
-    return <RouterContext.Provider value={{ loadingElement, notFoundElement}}>
+    return <RouterContext.Provider value={{ loadingElement, notFoundElement, onChange}}>
         {props.children}
     </RouterContext.Provider>
 
@@ -30,14 +31,15 @@ async function callFunctionAsAsync({ func, params }) {
 }
 
 
-function RoutePromise({ component, params }){
+function RoutePromise({ loader, component, params, self }){
     if(typeof component === "function"){
-        const { isPending, isResolved, isRejected, error, data } = useAsync({ promiseFn: callFunctionAsAsync, func: component, params: params });
+        const { isPending, isResolved, isRejected, error, data } = useAsync({ promiseFn: callFunctionAsAsync, func: loader, params: params });
         if((!isPending) || (isRejected || isResolved)){
             if(error){
                 return <div>ERRO: {error.message}</div>
             }else{
-                return data;
+                const C = component;
+                return <C data={data} params={params} self={self}/>;
             }
         }
         const e = useRouter();
@@ -51,7 +53,7 @@ function RoutePromise({ component, params }){
  * 
  * @type {React.JSXElementConstructor}
  */
-export function Routes({ children }) {
+export function Routes({ children, ...params }) {
     const [currentPath, setCurrentPath] = useState(window.location.pathname);
     const [childs, setChilds] = useState([]);
     useEffect(() => {
@@ -74,7 +76,15 @@ export function Routes({ children }) {
         if(child.type === Route){
             const validate = createValidation({ path: child.props.path, currentPath });
             if(validate.status){
-                return <RoutePromise component={child.props.component} params={validate.params} key={location.pathname}/>;
+                for(const k in params){
+                    validate.params[k] = params[k];
+                }
+                let c = { render: child.props.component, loader: () => {}, self: {} };
+                if(child.props.component.IsPage){
+                    const el = new (child.props.component);
+                    c = { loader: el.loader, render: el.render, self: el }
+                }
+                return <RoutePromise self={c.self} loader={c.loader} component={c.render} params={validate.params} key={location.pathname}/>;
             }
         }
     }
@@ -113,7 +123,7 @@ export function Route({ path, component }){
 }
 
 // Navigation
-export function Link({ href, to, children, ...props }){
+export function Link({ href, to, children, onClick: preOnClick, ...props }){
     const _href = href || to || "";
     const navigate = useNavigate();
     const onClick = (event) => {
@@ -121,12 +131,16 @@ export function Link({ href, to, children, ...props }){
             return;
         }
         event.preventDefault();
+        if(preOnClick && typeof preOnClick === "function"){
+            preOnClick();
+        }
         navigate.to(_href);
     };
     return <a href={_href} onClick={onClick} {...props}>{children}</a>
 }
 
 export function useNavigate(){
+    const r = useRouter() || {};
     return {
         to(href){
             if(href.startsWith("#") || href.startsWith("http://") || href.startsWith("https://") || href.startsWith("//")){
@@ -135,6 +149,7 @@ export function useNavigate(){
             }
             window.history.pushState({}, "", href);
             const navEvent = new PopStateEvent('popstate');
+            r.onChange ? r.onChange() : null;
             window.dispatchEvent(navEvent);
         }
     }
@@ -147,4 +162,16 @@ export function LoadingRouter(){
 
 export function NotFoundRouter(){
     return <div className="not-found">Not Found</div>
+}
+
+export function Component({children, onRender=()=>{}, onDestroy=()=>{} }) {
+    useEffect(() => {
+        (onRender) ? onRender() : null;
+        return () => {
+            (onDestroy) ? onDestroy() : null;
+        }
+    }, [])
+    return <>
+        {children}
+    </>
 }

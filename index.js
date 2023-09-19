@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { mkdirSync, existsSync } = require("fs");
 
 if(!existsSync("workspaces")) mkdirSync("workspaces");

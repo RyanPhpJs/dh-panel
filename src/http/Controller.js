@@ -18,20 +18,16 @@ module.exports.Controller = class Controller {
     }
 
 }
-module.exports.route = (url, { method, body}) => {
-    return `$__${JSON.stringify({ url, method, body })}`;
+const BodyCache = new Map();
+
+module.exports.route = (url, { method, body, isAdmin=false, isRootAdmin=false }) => {
+
+    const id = require("crypto").randomUUID();
+    BodyCache.set(id, body||null);
+
+    return `$__${JSON.stringify({ url, method, body: id, isAdmin: ((isAdmin || isRootAdmin) ? ((isRootAdmin) ? "root" : "admin") : false) })}`;
 }
 
-module.exports.Body = () => {
-    const nMapping = ["string", "number", "integer", "boolean" ];
-    const body = {};
-    const p = {}
-    for(const k of nMapping) p[k] = (name, isOptional=false) => {
-        body[name] = { o: isOptional, t: k };
-        return p;
-    }
-    p.toJSON = () => {
-        return body;
-    }
-    return p;
+module.exports.getBody = (id) => {
+    return BodyCache.get(id);
 }

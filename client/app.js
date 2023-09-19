@@ -3,6 +3,7 @@ import UserContext from "./context/User";
 import { Auth, useAuth } from "./lib/auth";
 import { useAsync } from "react-async";
 import { RoutersUnathorized } from "./routers/unauth";
+import { RoutersAuthorized } from "./routers/authenticate";
 
 export function useUser(){
     const context = useContext(UserContext);
@@ -59,10 +60,8 @@ function PageRouter() {
         return <PendingPage setUser={setUser} auth={auth} />
     }
 
-    console.log(user);
-
     if(user){
-        return <div>User authenticated</div>
+        return <RoutersAuthorized auth={auth}/>
     }
 
     return <RoutersUnathorized setUser={setUser} auth={auth} />

@@ -7,11 +7,10 @@ export function LoginPage(){
     const user = useUser();
 
     return <div className="login-container">
-        <div className="card">
+        <div className="login_card">
             <div className="left-card-content">
                 <h3>DH Panel</h3>
                 <Form method="POST" target="/api/login" onResponse={(data) => {
-                    console.log(data);
                     localStorage.setItem("dh_token", data.token);
                     user.reload();
                 }}>

@@ -48,6 +48,8 @@ module.exports = class User {
                 name: "Administrador",
                 password: await bcrypt.hash(password, 11),
                 username: username,
+                is_admin: true,
+                is_root_admin: true
             }
         });
 

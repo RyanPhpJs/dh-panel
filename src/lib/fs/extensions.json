@@ -1,0 +1,49 @@
+[
+    {
+        "type": "image",
+        "extensions": [
+            "jpg",
+            "jpeg",
+            "png",
+            "gif",
+            "bmp",
+            "tiff",
+            "webp",
+            "svg",
+            "ico"
+        ]
+    },
+    {
+        "type": "audio",
+        "extensions": [
+            "mp3",
+            "ogg",
+            "wav",
+            "m4a",
+            "aac"
+        ]
+    },
+    {
+        "type": "video",
+        "extensions": [
+            "mp4",
+            "webm",
+            "avi",
+            "mov",
+            "mkv",
+            "flv"
+        ]
+    },
+    {
+        "type": "panel_npm",
+        "names": [
+            "package.json"
+        ]
+    },
+    {
+        "type": "panel_composer",
+        "names": [
+            "composer.json"
+        ]
+    }
+]

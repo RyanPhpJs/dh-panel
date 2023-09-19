@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import UserContext from "../context/User";
-import { request } from "./api";
+import { RequestBuilder, request } from "./api";
 
 export class Auth {
 
@@ -19,10 +19,6 @@ export class Auth {
             .json();
     }
 
-    login(username, password){
-
-    }
-
 }
 
 export function useAuth(){
@@ -30,5 +26,11 @@ export function useAuth(){
     const context = useContext(UserContext);
 
     return context;
+
+}
+
+export function useApi(){
+
+    return (url) => new RequestBuilder(url, localStorage.getItem("dh_token"))
 
 }

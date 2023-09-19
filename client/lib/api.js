@@ -19,11 +19,16 @@ class Response {
             const resp = await this.getResponse();
             return await resp.json();
         }
+
+        this.getData = async () => {
+            const result = await this.json();
+            return result.data;
+        }
     }
 }
 
-class RequestBuilder {
-    constructor(url){
+export class RequestBuilder {
+    constructor(url, _token){
         let options = { method: "GET", headers: {} };
 
         this.token = function (type, token) {
@@ -34,6 +39,8 @@ class RequestBuilder {
             options.headers.Authorization = ntoken;
             return this;
         }
+
+        if(_token) this.token(_token);
 
         this.method = function (method) {
             options.method = method;
@@ -76,6 +83,10 @@ class RequestBuilder {
 
         this.json = function (body=null){
             return this.send(body).json();
+        }
+
+        this.data = function (body=null){
+            return this.send(body).getData();
         }
     }
 }

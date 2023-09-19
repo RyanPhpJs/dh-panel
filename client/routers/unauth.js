@@ -5,7 +5,9 @@ export function RoutersUnathorized() {
     
     const navigate = useNavigate();
 
-    return <RouterManager loading={<LoadingRouter />} notFound={() => navigate.to("/login")}>
+    return <RouterManager onChange={() => {
+        document.body.setAttribute("data-auth", "0")
+    }} loading={<LoadingRouter />} notFound={() => navigate.to("/login")}>
         <Routes>
             <Route path="/login" component={() => <LoginPage />} />
         </Routes>
