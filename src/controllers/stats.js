@@ -5,7 +5,7 @@ const stats = new StatsManager();
 
 module.exports = class Stats extends Controller {
 
-    [ route("/v1/stats", { method: "GET", isAdmin: true }) ];
+    [ route("/v1/stats", { method: "GET", permissions: ["VIEW_STATS"] }) ];
     /**
      * 
      * @type {import("../http/express").DHRoute}

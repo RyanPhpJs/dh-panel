@@ -20,12 +20,12 @@ module.exports.Controller = class Controller {
 }
 const BodyCache = new Map();
 
-module.exports.route = (url, { method, body, isAdmin=false, isRootAdmin=false }) => {
+module.exports.route = (url, { method, body, permissions=[] }) => {
 
     const id = require("crypto").randomUUID();
     BodyCache.set(id, body||null);
 
-    return `$__${JSON.stringify({ url, method, body: id, isAdmin: ((isAdmin || isRootAdmin) ? ((isRootAdmin) ? "root" : "admin") : false) })}`;
+    return `$__${JSON.stringify({ url, method, body: id, permissions })}`;
 }
 
 module.exports.getBody = (id) => {

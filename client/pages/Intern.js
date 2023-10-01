@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "../lib/Router";
 import "../scss/intern.scss";
-import { IconBox, IconFolder, IconHome, IconSettings } from "@tabler/icons-react";
+import { InternMenu } from "../routers/menus/Intern";
+import { IconFolder } from "@tabler/icons-react";
 
 function MenuManager({ items=[] }){
     let res = [];
@@ -51,8 +52,23 @@ export function InternPage({ children, user, menuItems=[] }) {
     }
 
     const NavItem = ({ icon, name, to, is_admin=false }) => {
-        if(is_admin && !user.is_admin) return null;
         return <MenuItem icon={icon} name={name} to={to} />
+    }
+
+    function MenuIntern(){
+        let res = [];
+        for(const item of InternMenu){
+            if(item.validate(user)){
+                res.push(<NavItem 
+                    name={item.name} 
+                    to={item.target} 
+                    icon={item.icon} 
+                    key={`to:${item.target}`}
+                ></NavItem>)
+            }
+        }
+    
+        return res;
     }
 
     const toggleTheme = (e) => {
@@ -114,11 +130,7 @@ export function InternPage({ children, user, menuItems=[] }) {
                 <div className="navbar">
                     <div className="container-xl">
                         <ul className="navbar-nav">
-                            <NavItem icon={<IconHome />} to="/" name="Home"/>
-                            <NavItem is_admin={true} icon={<IconBox />} to="/packages" name="Pacotes"/>
-                            <NavItem is_admin={true} icon={<IconFolder />} to="/files" name="Arquivos" />
-                            <NavItem icon={<IconSettings />} to="/settings" name="Configurações" />
-                            <MenuManager items={menuItems} />
+                            <MenuIntern />
                         </ul>
                     </div>
                 </div>

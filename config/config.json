@@ -1,4 +1,9 @@
 {
     "encryption_key": "So8#2jA1zv$HaHcpL7$sr7kyYxVSIEJUf/1zxg/QQ6",
-    "port": 1222
+    "port": 1222,
+    "docker": {
+        "host": "172.172.161.93",
+        "port": 2375,
+        "version": "v1.43"
+    }
 }

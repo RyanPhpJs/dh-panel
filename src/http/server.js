@@ -101,6 +101,11 @@ module.exports = class Server {
 
     }
 
+    /**
+     * @private
+     * @param {*} schema 
+     * @returns 
+     */
     createSchema(schema={}){
         let j = {};
         for(const key of Object.keys(Object.assign({}, schema))){
@@ -151,15 +156,17 @@ module.exports = class Server {
                                     console.log(`Rota ${decrypt.url} (${nname}->${next}) adicionada`)
                                     
                                     this.api[(decrypt.method || "GET").toLowerCase()](decrypt.url, (req, res, _next) => {
-                                        if(decrypt.isAdmin && !req.user.is_admin) return res.status(403).send({ success: false, message: "Você não tem acesso a isso" });
-                                        if(decrypt.isAdmin && decrypt.isAdmin === "root" && !req.user.is_root_admin) return res.status(403).send({ success: false, message: "Você não tem acesso a isso" });
-                                        else if(decrypt.isAdmin && decrypt.isAdmin === "user" && !req.user.is_admin) return res.status(403).send({ success: false, message: "Você não tem acesso a isso" });
-                                        const rs = this.validateBody(res.body, schema);
+                                        if(!req.user.permissions.includes("ADMINISTRADOR")){
+                                            for(const i of decrypt.permissions){
+                                                if(!req.user.permissions.includes(i)) return res.status(403).send({ success: false, message: "Você não tem acesso a isso" });
+                                            }
+                                        }
+                                        const rs = this.validateBody(req.body, schema);
                                         if(rs.status){
-                                            req.content = res.body;
+                                            req.content = rs.value;
                                             r[next].call(rs, req, res, _next);
                                         }else{
-                                            return res.status(400).send({ message: "Invalid Request", success: false });
+                                            return res.status(400).send({ message: rs.error?.message || "Invalid Request", success: false });
                                         }
                                     })
                                 }
@@ -167,6 +174,8 @@ module.exports = class Server {
                         }
                     }
                 }
+            }else if(fs.statSync(file).isDirectory()){
+                this.load(file);
             }
         }
     }

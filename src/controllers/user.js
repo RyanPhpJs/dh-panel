@@ -15,7 +15,7 @@ module.exports = class Login extends Controller {
             email: req.user.email,
             name: req.user.name,
             username: req.user.username,
-            is_admin: req.user.is_admin,
+            permissions: req.user.permissions,
             avatar: getAvatar(req.user.email)
         });
 

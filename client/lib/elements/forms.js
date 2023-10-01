@@ -88,7 +88,7 @@ export function Form({ auth, method, target, type, onSubmit, onResponse, childre
     }
 
     return <FormContext.Provider value={{ formData, setFormData, errors, setErrors, sendMode }}>
-        <form {...props} onSubmit={handleSubmit} className={joinClassName("form-control", className)}>
+        <form {...props} onSubmit={handleSubmit} className={joinClassName("f-form-control", className)}>
             {children}
         </form>
     </FormContext.Provider>

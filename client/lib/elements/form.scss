@@ -1,4 +1,4 @@
-.form-control {
+.f-form-control {
     width: 100%;
     min-height: 10px;
 
@@ -12,6 +12,12 @@
         width: 100%;
         align-items: center;
         padding: 5px 10px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 15px;
     }
 
     .form-input {

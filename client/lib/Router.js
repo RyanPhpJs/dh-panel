@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { createContext, useState } from "react";
 import { useAsync } from "react-async"
+import { Alert } from "./tabler/Alert";
+import { Content } from "./Content";
 
 const RouterContext = createContext(null);
 
@@ -36,9 +38,20 @@ function RoutePromise({ loader, component, params, self }){
         const { isPending, isResolved, isRejected, error, data } = useAsync({ promiseFn: callFunctionAsAsync, func: loader, params: params });
         if((!isPending) || (isRejected || isResolved)){
             if(error){
-                return <div>ERRO: {error.message}</div>
+                return <Content>
+                    <Alert title={"Ops! Um erro ocorreu"} text={error?.message}  color={"danger"}/>
+                </Content>
             }else{
+                if(data.__$raw){
+                    const r = data.__$raw();
+                    if(!r.success){
+                        return <Content>
+                            <Alert title={"Ops! Um erro ocorreu"} text={r?.message} color={"danger"}/>
+                        </Content>
+                    }
+                }
                 const C = component;
+                delete data.__$raw;
                 return <C data={data} params={params} self={self}/>;
             }
         }
@@ -53,7 +66,7 @@ function RoutePromise({ loader, component, params, self }){
  * 
  * @type {React.JSXElementConstructor}
  */
-export function Routes({ children, ...params }) {
+export function Routes({ children, routes=[], ...params }) {
     const [currentPath, setCurrentPath] = useState(window.location.pathname);
     const [childs, setChilds] = useState([]);
     useEffect(() => {
@@ -67,7 +80,7 @@ export function Routes({ children, ...params }) {
          * @type {(React.ReactElement)[]}
          */
         let childs = Array.isArray(children) ? children : [children];
-        setChilds(childs)
+        setChilds([...childs, ...routes])
         return () => {
             window.removeEventListener('popstate', onLocationChange)
         };
@@ -99,7 +112,6 @@ function createValidation(props){
             indexed.push(c);
             return "([^\/]+)";
         }) + "\/?$");
-    
     if(regex.test(props.currentPath)){
         let res = {};
         props.currentPath.replace(regex, (r, ...m) => {

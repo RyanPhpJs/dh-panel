@@ -22,13 +22,17 @@ class Response {
 
         this.getData = async () => {
             const result = await this.json();
-            return result.data;
+            const data = result.data || {};
+            data.__$raw = () => result;
+            return data;
         }
+
+        this.API_RESPONSE = true;
     }
 }
 
 export class RequestBuilder {
-    constructor(url, _token){
+    constructor(url, _token, disableThrow){
         let options = { method: "GET", headers: {} };
 
         this.token = function (type, token) {

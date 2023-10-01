@@ -8,7 +8,8 @@ export declare type DHRouter = (app: import("./server")) => any
 export type DHRequest = Request & {
     user: User,
     token: string,
-    token_expiration: number
+    token_expiration: number,
+    content: Record<string, string | number | boolean | string[] | number[] | boolean[] | any[]>
 };
 
 type ErrorFunction = ((status: number, error: string) => DHResponse) | ((error: string) => DHResponse);

@@ -17,8 +17,7 @@ model User {
   username String // username do usuario
   password String // senha encriptada do usuario
   two_factor_secret String? // Se
-  is_admin Boolean @default(false)
-  is_root_admin Boolean @default(false)
+  permissions String[] @default([])
   tokens AuthToken[]
 }
 
@@ -43,10 +42,10 @@ model Bots {
 
 model Packages {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  is_started Boolean @default(false)
-  ram_limit Int // 0 unlimited
-  cpu_limit Float // 0 unlimited
-  storage_limit Int // limit of storage in mb 0 unlimited
+  name String
+  ram_limit Int // -1 unlimited
+  cpu_limit Float // -1 unlimited
+  storage_limit Int // limit of storage in mb -1 unlimited
 
   bots Bots[]
 }

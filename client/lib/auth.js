@@ -31,6 +31,6 @@ export function useAuth(){
 
 export function useApi(){
 
-    return (url) => new RequestBuilder(url, localStorage.getItem("dh_token"))
+    return (url, disableThrow=false) => new RequestBuilder(url, localStorage.getItem("dh_token"), disableThrow)
 
 }
